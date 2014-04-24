@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+#
+# basher `pull` plugin
+#
+# This plugin serves one purpose; to ensure that the latest version of the
+# `basher-repo` is pulled to the running node.  This plugin assumes that
+# your `basher-repo` located in $BASHER_DIR is a git repository, and is
+# responsible for keeping it up-to-date with the remote repository.
+#
+# Author: Dave Eddy <dave@daveeddy.com>
+# Date: 3/23/14
+# License: MIT
+
+repo='git://github.com/bahamas10/basher-repo'
+dir=$BASHER_DIR
+branch='master'
+
+git_repository "$repo" "$dir" "$branch"
+
+# See the `config` plugin for a thorough explanation of
+# why 0 is expliticly returned at the end of this plugin.
+return 0

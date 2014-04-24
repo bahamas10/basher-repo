@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+#
+# setup rsyslog for SmartOS
+#
+# Author: Dave Eddy <dave@daveeddy.com>
+# Date: 3/17/14
+# License: MIT
+
+# define our helper functions
+. ../smf/service
+. ../pkgin/package
+
+# disable the default `syslogd` service
+smf_service disable system-log
+
+# install rsyslog
+pkgin_package install rsyslog
+
+# put the config in place, and restart the service if it is different
+if put_file files/rsyslog.conf /opt/local/etc/rsyslog.conf; then
+	smf_service restart rsyslog
+fi
+
+# ensure rsyslog is enabled
+smf_service enable rsyslog

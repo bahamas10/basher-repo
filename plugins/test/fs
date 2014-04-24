@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+#
+# Author: Dave Eddy <dave@daveeddy.com>
+# Date: 3/23/14
+# License: MIT
+
+# place a simple text file
+put_file files/hello-world1.txt /tmp/hello-world1.txt
+
+# place a template that should stay the same every run
+NAME=$HOSTNAME put_template templates/hello-world2.txt.erb /tmp/hello-world2.txt
+
+# place a template that changes every run
+NAME=$HOSTNAME put_template templates/hello-world3.txt.erb /tmp/hello-world3.txt

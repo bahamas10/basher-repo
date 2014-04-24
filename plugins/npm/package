@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+#
+# Node npm wrapper function
+#
+# Author: Dave Eddy <dave@daveeddy.com>
+# Date: 3/17/14
+# License: MIT
+
+trace 'npm :: defining npm_package'
+npm_package() {
+	log "npm_package :: $@"
+
+	local action=$1
+	local pkg=$2
+
+	[[ -n $action ]] || fatal 'npm_package :: action must be specified as $1'
+	[[ -n $pkg ]]    || fatal 'npm_package :: pkg must be specified as $2'
+
+	# ex: pkg=httpserver@0.0.0 => name=httpserver, version=0.0.0
+	# ex: pkg=jsontool         => name=jsontool,   version=
+	local name version
+	IFS='@' read name version <<< "$pkg"
+	trace "npm_package :: name=$name version=$version"
+
+	# check to see if the pkg is installed, and get the version
+	local installedversion=$(_npm_installed_version "$name")
+	if [[ -n $installedversion ]]; then
+		debug "npm_package :: $name installed at $installedversion"
+	else
+		debug "npm_package :: $name not installed"
+	fi
+
+	case "$action" in
+		install)
+			if [[ -n $version && $installedversion == $version ]]; then
+				trace "npm_package :: $name $installedversion already installed"
+			elif [[ -z $version && -n $installedversion ]]; then
+				trace "npm_package :: $name already installed"
+			else
+				debug "npm_package :: running \`npm install -g $pkg\`"
+				npm install -g "$pkg" || fatal "npm_package :: npm install failed"
+			fi
+			;;
+		uninstall)
+			if [[ -n $installedversion ]]; then
+				debug "npm_package :: running \`npm uninstall -g $pkg\`"
+				npm uninstall -g "$pkg" || fatal "npm_package :: npm uninstall failed"
+			fi
+			;;
+		*)
+			fatal "npm_package :: action $action not supported"
+			;;
+	esac
+
+	return 0
+}
+
+# given the name of a module, return the installed version
+# or empty string if it is not installed.
+_npm_installed_version() {
+	local name=$1
+	node /dev/stdin "$name" 2>/dev/null <<-EOF
+	var path = require('path');
+	var name = process.argv[2];
+	var prefix = path.dirname(path.dirname(process.execPath));
+	var package = require(path.join(prefix, 'lib/node_modules', name, 'package.json'));
+	console.log(package.version);
+	EOF
+}

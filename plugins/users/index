@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+#
+# basher `users` plugin
+#
+# Manage users on a system.  Tested on SmartOS only, but can
+# easily be adapted to other Unix or Unix-like systems.
+#
+# Author: Dave Eddy <dave@daveeddy.com>
+# Date: 3/24/14
+# License: MIT
+
+shopt -s nullglob
+for file in users/*; do
+	# ex: file => users/dave
+	# ex: name => dave
+	name=${file##*/}
+
+	debug "processing user $name"
+
+	# read the users information from the local database. these variables will be
+	# unset if the user is not found on the local system.
+	IFS=: read _user _pass _uid _gid _comment _home _shell < \
+		<(getent passwd "$name" 2>/dev/null)
+
+	# clean up environment
+	comment=
+	home=
+	locked=
+	uid=
+	sshkeys=()
+	# load the user config
+	trace "sourcing $file"
+	. "$file" || fatal "failed to load $file"
+
+	# sanity check config with actual data on the system if the user is present
+	if [[ -n $_uid && -n $uid && $_uid != $uid ]]; then
+		fatal "user $name already exists with UID $_uid (not $uid)"
+	elif [[ -n $_home && -n $home && $_home != $home ]]; then
+		fatal "user $name already exists with home dir $_home (not $home)"
+	elif [[ -n $_comment && -n $comment && $_comment != $comment ]]; then
+		fatal "user $name already exists with gecos '$_comment' (not '$comment')"
+	fi
+
+	# create the user if necessary
+	if [[ -n $_user ]]; then
+		debug "user $name found on local machine"
+	else
+		# useradd options
+		o=('-m')
+		[[ -n $comment ]] && o=("${o[@]}" '-c' "$comment")
+		[[ -n $home ]]    && o=("${o[@]}" '-d' "$home")
+		[[ -n $uid ]]     && o=("${o[@]}" '-u' "$uid")
+
+		# create the user :0
+		warn "creating user $name"
+		useradd "${o[@]}" "$name" || fatal "failed to run \`useradd\`"
+	fi
+
+	# lock or unlock the user
+	if [[ $locked == 'true' ]]; then
+		debug "locking $name"
+		passwd -l "$name" > /dev/null || fatal "failed to lock $name"
+	else
+		debug "unlocking $name"
+		passwd -d "$name" > /dev/null || fatal "failed to unlock $name"
+	fi
+
+	# determine the users home directory.  we first assume it is $home, which is supplied
+	# directly from the user configuration file.  if that variable is not set, we then
+	# try $_home, which is the home directory from `getent passwd`, which is the users
+	# home directory according to the local passwd database.  if that fails, we are
+	# out of lock, so assume that the homedir is /home/$name.
+	home=${home:-$_home}
+	home=${home:-/home/$name}
+	trace "inferring home directory to be $home"
+
+	# place ssh keys if provided
+	if [[ -n ${sshkeys[0]} ]]; then
+		tmpfile=$(mktemp "/tmp/basher-users-$name-authorized-keysXXXXXX")
+		file="$home/.ssh/authorized_keys"
+
+		mkdir -p "${file%/*}"
+		debug "writing ssh keys to $file"
+
+		echo "# public keys dropped off by basher" > "$tmpfile"
+		for pubkey in "${sshkeys[@]}"; do
+			echo "$pubkey" >> "$tmpfile"
+		done
+
+		put_file "$tmpfile" "$file"
+
+		trace "unlinking temp file $tmpfile"
+		rm -f "$tmpfile"
+	fi
+done
+
+return 0

@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+#
+# basher `node` plugin
+#
+# Install Node.js from source on a node
+#
+# Author: Dave Eddy <dave@daveeddy.com>
+# Date: 3/23/14
+# License: MIT
+
+NODE_VERSION=${NODE_VERSION:-v0.10.26}
+
+repo='git://github.com/joyent/node.git'
+dir='/var/tmp/basher/node'
+
+log "ensuring node $version is installed"
+
+# ensure the source dir parent dir is created
+mkdir -p "${dir%/*}"
+
+# configure options
+configure=()
+if dtrace -V &>/dev/null; then
+	configure+=('--with-dtrace')
+fi
+case "$(uname)" in
+	SunOS) configure=('--prefix=/opt/local');;
+esac
+
+# only install node if the versions are different
+nodeversion=$(node -v 2>/dev/null)
+if (($? != 0)); then
+	debug 'node not installed'
+elif [[ $nodeversion == $version ]]; then
+	debug "node $nodeversion already installed"
+	return 0
+else
+	debug "node $nodeversion installed - installing node $version"
+fi
+
+# clone the repo
+git_repository "$repo" "$dir" "$version"
+
+# compile the software
+trace 'entering subshell'
+(
+trace "chdir(2) to $dir"
+cd "$dir"                     || fatal "failed to chdir(2) to $dir"
+
+./configure "${configure[@]}" || fatal "failed to \`./configure ${configure[@]}\`"
+make                          || fatal "failed to \`make\`"
+make install                  || fatal "failed to \`make install\`"
+
+trace 'leaving subshell'
+return 0
+) || exit $?
+# we have to explicitly call exit if the subshell `fatal`s, because
+# the subshell acts like a try/catch block around exiting
+
+return 0

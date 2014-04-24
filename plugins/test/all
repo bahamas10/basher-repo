@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+#
+# An example item that just logs some stuff
+#
+# Author: Dave Eddy <dave@daveeddy.com>
+# Date: 3/23/14
+# License: MIT
+
+log 'loaded test item'
+
+log 'testing log messages'
+error '> some error'
+warn '> some warn'
+info '> some info'
+debug '> some debug'
+trace '> some trace'
+log '> some log'
+
+log "running in $PWD as $USER"
+log "basher version $BASHER_VERSION"
+log "uname $(uname)"
+
+[[ -n $SUDO_USER ]] && log "run with sudo by $SUDO_USER"
+
+log 'finished'

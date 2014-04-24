@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+#
+# SMF svcadm and svccfg wrapper function
+#
+# Author: Dave Eddy <dave@daveeddy.com>
+# Date: 3/17/14
+# License: MIT
+
+trace 'SMF :: defining smf_manifest'
+smf_manifest() {
+	log "SMF :: $@"
+
+	if ! svccfg -v "$@"; then
+		fatal "SMF :: failed to $@"
+	fi
+}

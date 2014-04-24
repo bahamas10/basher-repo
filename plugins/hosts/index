@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+#
+# basher `hosts` plugin
+#
+# Manage /etc/hosts
+#
+# Author: Dave Eddy <dave@daveeddy.com>
+# Date: 4/7/14
+# License: MIT
+
+nodesdir=$BASHER_DIR/nodes
+
+debug "finding nodes in $nodesdir"
+data=()
+for file in "$nodesdir/"*.com; do
+	fqdn=${file##*/}
+	debug "processing $fqdn ($file)"
+
+	# clear environment
+	ip=
+	. "$file" || fatal "failed to source $fqdn ($file)"
+
+	if [[ -n $ip ]]; then
+		trace "$fqdn: IP address found as $ip"
+		data+=("$fqdn $ip")
+	else
+		trace "$fqdn: no IP address found"
+	fi
+done
+
+debug "${#data[@]} nodes with IP addresses found"
+
+export DATA=$(for d in "${data[@]}"; do echo "$d"; done)
+put_template templates/hosts.erb /etc/hosts2 644 root
+
+return 0

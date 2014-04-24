@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+#
+# SmartOS pkgin wrapper function
+#
+# Author: Dave Eddy <dave@daveeddy.com>
+# Date: 3/17/14
+# License: MIT
+
+trace 'pkgin :: defining pkgin_package'
+pkgin_package() {
+	log "pkgin :: $@"
+	if ! pkgin -y "$@"; then
+		fatal "pkgin :: failed to $@"
+	fi
+}

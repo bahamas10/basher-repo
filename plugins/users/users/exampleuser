@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+#
+# An example user file
+#
+# The username is the basename of this file: `exampleuser`.
+#
+# The fields below are *optional*, and will default to whatever your system
+# defaults to.
+
+# passwd file comment.  Note: if this field is specified and it does NOT
+# match the comment for the user found on the local machine of the same name,
+# this plugin will fatal.
+comment='Example User'
+
+# An array of ssh keys to place in ~/.ssh/authorized_keys
+sshkeys=(
+	'ssh-rsa abcdef1234567890 exampleuser@example.com'
+	'ssh-rsa ABCDEF1234567890 exampleuser@other-example.com'
+)
+
+# UID to prefer when creating the user.  If the user is found locally but
+# the UID doesn't match the one specified below, this plugin will fatal
+uid=5001
+
+# Whether or not the user is locked.  You can set this variable anytime
+# after the user is created to lock or unlock that user.  This is useful
+# if you'd like to lock a user out of the system (say they leave the company)
+# but you want to keep their files and username to avoid UID conflicts.
+locked=false
+
+# Home directory to prefer when the user is created.  If the user is found
+# on the local machine and the home directory for that user does not match
+# what is specefied below, this module will fatal.
+home='/home/exampleuser'
+
+# Since this "config file" is nothing more than a bash script, you are free
+# to put whatever logic you'd like here.
+re='^dev'
+if [[ $HOSTNAME =~ $re ]]; then
+	# hostname starts with dev, give the user access
+	locked=false
+else
+	# hostname is not in dev, lock the user
+	locked=true
+fi

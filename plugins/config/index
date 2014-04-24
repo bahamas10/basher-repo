@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+#
+# basher `config` plugin
+#
+# This plugin is used to control the /etc/basher.conf file on a node.
+#
+# Yo dawg, I heard you like basher...
+#
+# Author: Dave Eddy <dave@daveeddy.com>
+# Date: 3/23/14
+# License: MIT
+
+# when this plugin is run by `basher`, the PWD will be this directory,
+# so files are referenced relatively.
+
+# This function fatals if it fails, returns 0 if the files were the same
+# or returns 1 if the files differed.
+put_file files/basher.conf /etc/basher.conf
+
+# We explicitly return 0, because if we made it here the above line did NOT
+# fatal.  However, since the above line could return 1 under perfectly
+# acceptable conditions (the files were different), that return code of 1
+# would have been given to the parent, which would have assumed that this
+# plugin failed.  Because of this, it is good practice to return 0 explicitly
+# if the last command in a plugin has an ambiguous return code.
+return 0
