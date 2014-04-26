@@ -17,7 +17,9 @@ log "currently running basher $(basher -V)"
 
 log "$raw -> $bin"
 
-curl "$raw" -o "$bin" || exit 1
+curl "$raw" -o "$bin" || fatal 'failed to curl'
 chmod +x "$bin"
+
+basher -h || fatal 'basher fails to execute'
 
 log "basher $(basher -V) installed"
