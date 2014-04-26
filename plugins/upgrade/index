@@ -10,7 +10,7 @@
 
 PREFIX=${PREFIX:-/opt/local}
 
-raw='https://raw.github.com/bahamas10/basher/master/basher'
+raw='https://raw.githubusercontent.com/bahamas10/basher/master/basher'
 bin=$PREFIX/bin/basher
 
 log "currently running basher $(basher -V)"
