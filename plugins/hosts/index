@@ -31,6 +31,6 @@ done
 debug "${#data[@]} nodes with IP addresses found"
 
 export DATA=$(for d in "${data[@]}"; do echo "$d"; done)
-put_template templates/hosts.erb /etc/hosts2 644 root
+put_template templates/hosts.erb /etc/hosts 644 root
 
 return 0
