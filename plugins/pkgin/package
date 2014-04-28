@@ -8,8 +8,36 @@
 
 trace 'pkgin :: defining pkgin_package'
 pkgin_package() {
-	log "pkgin :: $@"
-	if ! pkgin -y "$@"; then
-		fatal "pkgin :: failed to $@"
-	fi
+	local action=$1
+	local pkg=$2
+
+	log "pkgin :: $action $pkg"
+
+	case "$action" in
+		install)
+			if _pkgin_package_installed "$pkg"; then
+				debug "pkgin :: $pkg already installed"
+				return 0
+			fi
+			;;
+		remove)
+			if ! _pkgin_package_installed "$pkg"; then
+				debug "pkgin :: $pkg not present"
+				return 0
+			fi
+			;;
+		*) fatal "pkgin :: unknown action $action"
+	esac
+
+
+	trace "pkgin :: calling \`pkgin -y $action $package\`"
+	pkgin -y "$action" "$package" || fatal "pkgin :: failed to $action $package"
+	warn "pkgin :: $action $pkg"
+	return 0
+}
+
+# check if a package is installed
+_pkgin_package_installed() {
+	local pkg=$1
+	pkgin ls | grep -q "^$pkg"
 }
