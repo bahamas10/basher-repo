@@ -28,8 +28,16 @@ Functions
 
 - `smf_service`
 
-This function is simply a wrapper for calling `svcadm -v "$@"`, with logging
-and error-checking
+This function is a little more than a wrapper for calling `svcadm -v "$@"`, with logging
+and error-checking.  If the action specified is `enable` or `disable`, this function
+will determine if this action needs to be taken before doing anything.  ie. if a service
+is already enabled, there's no sense calling enable again (1).  This way,
+this function will emit a `warn` line if and only if an action is taken.
+
+- (1) - actually, I'd argue that it makes more sense to call `svcadm enable` *every* time,
+as who cares what state the service is currently in... we want enabled!  However, the reason
+this is not done is to provide better logging.  This function will only emit logs lower than
+`info` if `svcadm` is forked.
 
 - `smf_manifest`
 

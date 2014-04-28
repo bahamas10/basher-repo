@@ -8,9 +8,44 @@
 
 trace 'SMF :: defining smf_service'
 smf_service() {
-	log "SMF :: $@"
+	local action=$1
+	local service=$2
 
-	if ! svcadm -v "$@"; then
-		fatal "SMF :: failed to $@"
-	fi
+	log "SMF :: $action $service"
+
+	# find the service in SMF
+	local state= fmri= out=
+	out=$(svcs -Ho state,fmri "$service")
+	(($? == 0)) || fatal "SMF :: failed to find service $service"
+
+	# read the output, fatal if there are multiple FMRI's found
+	while read state fmri; do
+		if [[ -n $state || -n $fmri ]]; then
+			fatal "SMF :: ambiguous target - multiple FMRI's match '$service'"
+		fi
+	done
+
+	debug "SMF :: $service ($state) => $fmri"
+
+	# don't take action if we don't need to
+	case "$action" in
+		enable)
+			if [[ $state == enabled ]]; then
+				debug "SMF :: $service already enabled"
+				return 0
+			fi
+			;;
+		disable)
+			if [[ $state == disabled ]]; then
+				debug "SMF :: $service already disabled"
+				return 0
+			fi
+			;;
+	esac
+
+	# run the command
+	trace "SMF :: calling \`svcadm -v $action $fmri\`"
+	svcadm -v "$action" "$fmri" || fatal "SMF :: failed to $action $fmri"
+	warn "SMF :: $action $service"
+	return 0
 }
