@@ -19,18 +19,21 @@ smf_service() {
 	(($? == 0)) || fatal "SMF :: failed to find service $service"
 
 	# read the output, fatal if there are multiple FMRI's found
-	while read state fmri; do
-		if [[ -n $state || -n $fmri ]]; then
-			fatal "SMF :: ambiguous target - multiple FMRI's match '$service'"
-		fi
-	done
+	local i=0
+	while read -r _state _fmri; do
+		((i++ < 1)) || fatal "SMF :: ambiguous target - multiple FMRI's match '$service'"
+		state=$_state fmri=$_fmri
+	done <<< "$out"
+
+	trace "SMF :: fmri -> $fmri"
+	trace "SMF :: state -> $state"
 
 	debug "SMF :: $service ($state) => $fmri"
 
 	# don't take action if we don't need to
 	case "$action" in
 		enable)
-			if [[ $state == enabled ]]; then
+			if [[ $state == online ]]; then
 				debug "SMF :: $service already enabled"
 				return 0
 			fi
