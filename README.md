@@ -31,7 +31,7 @@ This directory is optional and is not required for `basher` to function.
 
 - `nodes/`
 
-This directory contains a file for each node (system) in an environment will `basher`
+This directory contains a file for each node (machine) in an environment where `basher`
 could be run.  This directory is optional and is not required for `basher` to function.
 
 Documentation
