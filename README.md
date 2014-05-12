@@ -24,11 +24,6 @@ Contents
 This directory is used to store plugins for `basher`.  Plugins consist of a single
 directory with 1 or more scripts in them.
 
-- `scripts/`
-
-This directory contains shared scripts that can be used by any and all `basher` plugins.
-This directory is optional and is not required for `basher` to function.
-
 - `nodes/`
 
 This directory contains a file for each node (machine) in an environment where `basher`
