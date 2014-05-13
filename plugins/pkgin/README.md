@@ -26,5 +26,5 @@ Functions
 
 - `pkgin_package`
 
-This function is simply a wrapper for calling `pkgin -y "$@"`, with logging
+This function is mostly a wrapper for calling `pkgin -y "$@"`, with logging
 and error-checking

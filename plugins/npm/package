@@ -39,12 +39,14 @@ npm_package() {
 			else
 				debug "npm_package :: running \`npm install -g $pkg\`"
 				npm install -g "$pkg" || fatal "npm_package :: npm install failed"
+				warn "npm_package :: $pkg installed"
 			fi
 			;;
 		uninstall)
 			if [[ -n $installedversion ]]; then
 				debug "npm_package :: running \`npm uninstall -g $pkg\`"
 				npm uninstall -g "$pkg" || fatal "npm_package :: npm uninstall failed"
+				warn "npm_package :: $pkg removed"
 			fi
 			;;
 		*)

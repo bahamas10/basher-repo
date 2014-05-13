@@ -4,7 +4,7 @@ npm
 A wrapper function for [npm](https://www.npmjs.org/) that handles
 logging and error-checking.
 
-**Note:** this plugin does NOT install Node.js or `npm`.
+**Note:** this plugin does NOT install Node.JS or `npm`.
 
 Usage
 -----

@@ -5,4 +5,4 @@
 # see `prod-1.example.com` for more verbose comments.
 
 ip='192.168.1.3'
-env='prod'
+env='dev'

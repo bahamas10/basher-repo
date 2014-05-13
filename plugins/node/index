@@ -48,7 +48,7 @@ trace "chdir(2) to $dir"
 cd "$dir"                     || fatal "failed to chdir(2) to $dir"
 
 ./configure "${configure[@]}" || fatal "failed to \`./configure ${configure[@]}\`"
-make                          || fatal "failed to \`make\`"
+make -j4                      || fatal "failed to \`make -j4\`"
 make install                  || fatal "failed to \`make install\`"
 
 trace 'leaving subshell'

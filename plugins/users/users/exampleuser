@@ -30,7 +30,7 @@ locked=false
 
 # Home directory to prefer when the user is created.  If the user is found
 # on the local machine and the home directory for that user does not match
-# what is specefied below, this module will fatal.
+# what is specified below, this module will fatal.
 home='/home/exampleuser'
 
 # Since this "config file" is nothing more than a bash script, you are free

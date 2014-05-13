@@ -12,11 +12,11 @@ nodesdir=$BASHER_DIR/nodes
 
 debug "finding nodes in $nodesdir"
 data=()
+shopt -s nullglob
 for file in "$nodesdir/"*.com; do
 	fqdn=${file##*/}
 	debug "processing $fqdn ($file)"
 
-	# clear environment
 	ip=
 	. "$file" || fatal "failed to source $fqdn ($file)"
 

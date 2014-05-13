@@ -1,14 +1,14 @@
 node
 ====
 
-Install [Node.js](http://nodejs.org/) from source.
+Install [Node.JS](http://nodejs.org/) from source.
 
 Description
 -----------
 
-Install Node.js from source by cloning the source from GitHub, ensuring
-it is up-to-date, and compiling it and installing it if it is not currently
-installed at the specified version.
+Install Node.JS from source by cloning it from GitHub, ensuring it is
+up-to-date, compiling it, and installing it if it is not currently installed
+at the specified version.
 
 Usage
 -----

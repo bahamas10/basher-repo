@@ -21,4 +21,4 @@ to ensure that the latest config is pulled.
 Also, you can run the following command to update just the `basher` config on
 any node:
 
-    bahser config
+    basher config

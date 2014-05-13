@@ -15,7 +15,7 @@ bin=$PREFIX/bin/basher
 
 log "currently running basher $(basher -V)"
 
-log "$raw -> $bin"
+warn "$raw -> $bin"
 
 curl "$raw" -o "$bin" || fatal 'failed to curl'
 chmod +x "$bin"
