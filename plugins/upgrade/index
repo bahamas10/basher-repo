@@ -20,6 +20,6 @@ warn "$raw -> $bin"
 curl "$raw" -o "$bin" || fatal 'failed to curl'
 chmod +x "$bin"
 
-basher -h || fatal 'basher fails to execute'
+basher -V &>/dev/null || fatal 'basher fails to execute'
 
 log "basher $(basher -V) installed"
