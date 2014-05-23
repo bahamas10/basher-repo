@@ -29,8 +29,8 @@ pkgin_package() {
 		*) fatal "pkgin :: unknown action $action"
 	esac
 
-	trace "pkgin :: calling \`pkgin -y $action $package\`"
-	pkgin -y "$action" "$package" || fatal "pkgin :: failed to $action $package"
+	trace "pkgin :: calling \`pkgin -y $action $pkg\`"
+	pkgin -y "$action" "$pkg" || fatal "pkgin :: failed to $action $pkg"
 	warn "pkgin :: $action $pkg"
 	return 0
 }
