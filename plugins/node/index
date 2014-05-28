@@ -24,7 +24,7 @@ if dtrace -V &>/dev/null; then
 	configure+=('--with-dtrace')
 fi
 case "$(uname)" in
-	SunOS) configure=('--prefix=/opt/local');;
+	SunOS) configure+=('--prefix=/opt/local');;
 esac
 
 # only install node if the versions are different
