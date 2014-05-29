@@ -59,10 +59,11 @@ for file in users/*; do
 	# lock or unlock the user
 	if [[ $locked == 'true' ]]; then
 		debug "locking $name"
+		passwd -d "$name" > /dev/null || fatal "failed to remove password fo $name"
 		passwd -l "$name" > /dev/null || fatal "failed to lock $name"
 	else
 		debug "unlocking $name"
-		passwd -d "$name" > /dev/null || fatal "failed to unlock $name"
+		passwd -N "$name" > /dev/null || fatal "failed to unlock $name"
 	fi
 
 	# determine the users home directory.  we first assume it is $home, which is supplied
